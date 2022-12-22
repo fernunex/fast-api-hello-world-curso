@@ -44,8 +44,7 @@ class Location(BaseModel):
         "example": {
             "city": "Salamanca",
             "state": "Monterrey",
-            "country": "Mexico"
-            }
+            "country": "Mexico"}
             }
 
 
