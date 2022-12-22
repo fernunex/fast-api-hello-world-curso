@@ -4,13 +4,14 @@ from enum import Enum
 
 #Pydantic
 from pydantic import BaseModel # to create models
-from pydantic import Field
+from pydantic import Field, EmailStr
 
 # FastAPI
 from fastapi import FastAPI
 from fastapi import Body, Query, Path
 
 app = FastAPI()
+
 
 # Models + Validations
 class HairColor(str, Enum):
@@ -22,29 +23,70 @@ class HairColor(str, Enum):
 
 
 class Location(BaseModel):
-    city: str
-    state: str
-    country: str
+    city: str= Field(
+        ...,
+        min_length=2,
+        max_length=50
+        )
+    state: str = Field(
+        ...,
+        min_length=2,
+        max_length=50
+        )
+    country: str = Field(
+        ...,
+        min_length=2,
+        max_length=50
+        )
+    
+    class Config: 
+        schema_extra = {
+        "example": {
+            "city": "Salamanca",
+            "state": "Monterrey",
+            "country": "Mexico"
+            }
+            }
 
 
 class Person(BaseModel):
     first_name: str = Field(
         ...,
         min_length=1,
-        max_length=50
+        max_length=50,
+        example='Saul'
         )
     last_name: str = Field(
         ...,
         min_length=1,
-        max_length=50
+        max_length=50,
+        example='Valdez'
         )
     age: int = Field(
         ...,
         gt=0,
-        le=115
+        le=115,
+        example=19
+
     )
-    hair_color: Optional[HairColor] = Field(default=None)
-    is_married: Optional[bool] = Field(default=None)
+    email: EmailStr = Field(
+        ...,
+        example='som@thing.com'
+        )
+    hair_color: Optional[HairColor] = Field(default=None, example='blond')
+    is_married: Optional[bool] = Field(default=None, example=False)
+
+    # class Config:
+    #     schema_extra = {
+    #         "example":{
+    #                 "first_name": "Fernando",
+    #                 "last_name": "Nuñez Valdez",
+    #                 "age": 20,
+    #                 "email": "fer@example.com",
+    #                 "hair_color": "black",
+    #                 "is_married": False
+    #         }
+    #     }
 
 @app.get("/")
 def home():
@@ -100,7 +142,7 @@ def update_person(
         gt=0
     ),
     person: Person = Body(...),
-    location: Location = Body(...)
+    location: Location = Body(...,)
 ):
     result = person.dict()
     result.update(location.dict())
