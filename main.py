@@ -47,8 +47,7 @@ class Location(BaseModel):
             "country": "Mexico"}
             }
 
-
-class Person(BaseModel):
+class PersonBase(BaseModel):
     first_name: str = Field(
         ...,
         min_length=1,
@@ -74,8 +73,9 @@ class Person(BaseModel):
         )
     hair_color: Optional[HairColor] = Field(default=None, example='blond')
     is_married: Optional[bool] = Field(default=None, example=False)
-    password: str = Field(..., min_length=8)
 
+class Person(PersonBase):
+    password: str = Field(..., min_length=8)
     # class Config:
     #     schema_extra = {
     #         "example":{
@@ -88,32 +88,9 @@ class Person(BaseModel):
     #         }
     #     }
 
-class PersonOut(BaseModel):
-    first_name: str = Field(
-        ...,
-        min_length=1,
-        max_length=50,
-        example='Saul'
-        )
-    last_name: str = Field(
-        ...,
-        min_length=1,
-        max_length=50,
-        example='Valdez'
-        )
-    age: int = Field(
-        ...,
-        gt=0,
-        le=115,
-        example=19
+class PersonOut(PersonBase):
+    pass
 
-    )
-    email: EmailStr = Field(
-        ...,
-        example='som@thing.com'
-        )
-    hair_color: Optional[HairColor] = Field(default=None, example='blond')
-    is_married: Optional[bool] = Field(default=None, example=False)  
 
 @app.get("/")
 def home():
