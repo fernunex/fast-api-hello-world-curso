@@ -4,11 +4,11 @@ from enum import Enum
 
 #Pydantic
 from pydantic import BaseModel # to create models
-from pydantic import Field, EmailStr
+from pydantic import Field, EmailStr, SecretStr
 
 # FastAPI
 from fastapi import FastAPI
-from fastapi import Body, Query, Path
+from fastapi import Body, Query, Path, Form
 from fastapi import status
 
 app = FastAPI()
@@ -92,6 +92,13 @@ class Person(PersonBase):
 class PersonOut(PersonBase):
     pass
 
+class LoginOut(BaseModel):
+    username: str = Field(
+        ..., 
+        max_length=20, 
+        example="Fulanito55"
+        )
+    msg: str = Field(default="Login Successfully")
 
 @app.get(
     path="/",
@@ -171,3 +178,16 @@ def update_person(
     result.update(location.dict())
 
     return result
+
+# Forms
+
+@app.post(
+    path='/login',
+    status_code=status.HTTP_200_OK,
+    response_model=LoginOut
+)
+def login(
+    username: str = Form(...),
+    password: str = Form(...)
+):
+    return LoginOut(username=username)
