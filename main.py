@@ -135,11 +135,13 @@ def create_person(person: Person = Body(...)): # "..."" means that the parameter
     return person
 
 # Validaciones: Query Parameters
+# Deprecation of this function
 
 @app.get(
     path="/person/detail",
     status_code=status.HTTP_200_OK,
-    tags=["Persons"]
+    tags=["Persons"],
+    deprecated=True
     )
 def show_person(
     name: Optional[str] = Query(
